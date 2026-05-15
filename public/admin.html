@@ -115,7 +115,7 @@
                 container.innerHTML = orders.map(order => {
                     let items = [];
                     try {
-                        items = order.items;
+                        items = JSON.parse(order.items);
                     } catch(e) { items = []; }
                     
                     return `
