@@ -41,6 +41,8 @@ db.exec(`
         image TEXT,
         color_variants TEXT DEFAULT '[]',
         is_summer INTEGER DEFAULT 0,
+        is_bestseller INTEGER DEFAULT 0,
+        is_new INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
 `);
@@ -57,53 +59,81 @@ function checkAuth(req, res, next) {
     }
 }
 
-// ========== API ДЛЯ ТОВАРОВ ==========
+// ========== API ДЛЯ ТОВАРОВ (защищенные) ==========
+// Получить все товары (для админки)
 app.get('/api/admin/products', checkAuth, (req, res) => {
     const products = db.prepare('SELECT * FROM products ORDER BY id').all();
     res.json(products);
 });
 
+// Получить один товар по id
 app.get('/api/admin/products/:id', checkAuth, (req, res) => {
     const product = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
     if (!product) return res.status(404).json({ error: 'Товар не найден' });
     res.json(product);
 });
 
+// Добавить товар
 app.post('/api/admin/products', checkAuth, (req, res) => {
-    const { name, price, category, description, image, color_variants, is_summer } = req.body;
+    const { name, price, category, description, image, color_variants, is_summer, is_bestseller, is_new } = req.body;
     
     const stmt = db.prepare(`
-        INSERT INTO products (name, price, category, description, image, color_variants, is_summer)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO products (name, price, category, description, image, color_variants, is_summer, is_bestseller, is_new)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     
-    const result = stmt.run(name, price, category, description || '', image || '', JSON.stringify(color_variants || []), is_summer ? 1 : 0);
+    const result = stmt.run(
+        name, 
+        price, 
+        category, 
+        description || '', 
+        image || '', 
+        JSON.stringify(color_variants || []), 
+        is_summer ? 1 : 0, 
+        is_bestseller ? 1 : 0, 
+        is_new ? 1 : 0
+    );
+    
     res.json({ success: true, id: result.lastInsertRowid });
 });
 
+// Обновить товар
 app.put('/api/admin/products/:id', checkAuth, (req, res) => {
-    const { name, price, category, description, image, color_variants, is_summer } = req.body;
+    const { name, price, category, description, image, color_variants, is_summer, is_bestseller, is_new } = req.body;
     
     const stmt = db.prepare(`
         UPDATE products 
         SET name = ?, price = ?, category = ?, description = ?, 
-            image = ?, color_variants = ?, is_summer = ?
+            image = ?, color_variants = ?, is_summer = ?, is_bestseller = ?, is_new = ?
         WHERE id = ?
     `);
     
-    const result = stmt.run(name, price, category, description || '', image || '', JSON.stringify(color_variants || []), is_summer ? 1 : 0, req.params.id);
+    const result = stmt.run(
+        name, 
+        price, 
+        category, 
+        description || '', 
+        image || '', 
+        JSON.stringify(color_variants || []), 
+        is_summer ? 1 : 0, 
+        is_bestseller ? 1 : 0, 
+        is_new ? 1 : 0, 
+        req.params.id
+    );
     
     if (result.changes === 0) return res.status(404).json({ error: 'Товар не найден' });
     res.json({ success: true });
 });
 
+// Удалить товар
 app.delete('/api/admin/products/:id', checkAuth, (req, res) => {
     const result = db.prepare('DELETE FROM products WHERE id = ?').run(req.params.id);
     if (result.changes === 0) return res.status(404).json({ error: 'Товар не найден' });
     res.json({ success: true });
 });
 
-// ========== ПУБЛИЧНЫЕ API ==========
+// ========== ПУБЛИЧНЫЕ API (без защиты) ==========
+// Получить все товары для каталога
 app.get('/api/products', (req, res) => {
     const products = db.prepare('SELECT * FROM products ORDER BY id').all();
     const productsWithColors = products.map(p => ({
@@ -113,6 +143,7 @@ app.get('/api/products', (req, res) => {
     res.json(productsWithColors);
 });
 
+// Получить товар по id для страницы товара
 app.get('/api/products/:id', (req, res) => {
     const product = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
     if (!product) return res.status(404).json({ error: 'Товар не найден' });
@@ -138,19 +169,42 @@ app.get('/api/orders', (req, res) => {
     res.json(rows);
 });
 
-// ========== ОТДАЁМ HTML ==========
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-app.get('/catalog.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'catalog.html')));
-app.get('/about.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'about.html')));
-app.get('/gallery.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'gallery.html')));
-app.get('/reviews.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'reviews.html')));
-app.get('/contacts.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'contacts.html')));
-app.get('/faq.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'faq.html')));
-app.get('/cart.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'cart.html')));
-app.get('/admin-orders.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-orders.html')));
-app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-login.html')));
-app.get('/admin-products.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-products.html')));
+// ========== ОТДАЁМ HTML СТРАНИЦЫ ==========
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+app.get('/catalog.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'catalog.html'));
+});
+app.get('/about.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'about.html'));
+});
+app.get('/gallery.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'gallery.html'));
+});
+app.get('/reviews.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'reviews.html'));
+});
+app.get('/contacts.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'contacts.html'));
+});
+app.get('/faq.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'faq.html'));
+});
+app.get('/cart.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'cart.html'));
+});
+app.get('/admin-orders.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin-orders.html'));
+});
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin-login.html'));
+});
+app.get('/admin-products.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin-products.html'));
+});
 
+// Запуск сервера
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Сервер запущен: http://localhost:${PORT}`);

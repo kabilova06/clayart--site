@@ -467,13 +467,70 @@
 </div>
 
 <footer>
-
-    © 2026 ClayArt
-
+    <p>© 2026 ClayArt</p>
+    <p style="margin-top: 10px;">
+        <a href="/admin" style="color: #9d8b75; text-decoration: none; font-size: 12px;">🔐 Админ-панель</a>
+    </p>
 </footer>
 
 <script src="js/script.js"></script>
-
+<script>
+    // Загрузка бестселлеров и новинок с сервера
+    async function loadSliders() {
+        try {
+            const response = await fetch('/api/products');
+            const products = await response.json();
+            
+            // Фильтруем бестселлеры
+            const bestsellers = products.filter(p => p.is_bestseller === 1);
+            // Фильтруем новинки
+            const news = products.filter(p => p.is_new === 1);
+            
+            // Заполняем слайдер бестселлеров
+            const bestSliderTrack = document.querySelector('#bestSlider .slider-track');
+            if (bestSliderTrack && bestsellers.length > 0) {
+                bestSliderTrack.innerHTML = bestsellers.map(product => `
+                    <div class="slider-card">
+                        <div class="slider-image-wrap">
+                            <img src="${product.image || '/images/placeholder.jpg'}" onclick="openImage(this.src)" alt="${product.name}">
+                            <div class="slider-overlay">
+                                <button onclick="addToCart(this, '${product.name.replace(/'/g, "\\'")}', ${product.price}, event)">
+                                    Добавить в корзину
+                                </button>
+                            </div>
+                        </div>
+                        <h3>${product.name}</h3>
+                        <span>${product.price} ₽</span>
+                    </div>
+                `).join('');
+            }
+            
+            // Заполняем слайдер новинок
+            const newSliderTrack = document.querySelector('#newSlider .slider-track');
+            if (newSliderTrack && news.length > 0) {
+                newSliderTrack.innerHTML = news.map(product => `
+                    <div class="slider-card">
+                        <div class="slider-image-wrap">
+                            <img src="${product.image || '/images/placeholder.jpg'}" onclick="openImage(this.src)" alt="${product.name}">
+                            <div class="slider-overlay">
+                                <button onclick="addToCart(this, '${product.name.replace(/'/g, "\\'")}', ${product.price}, event)">
+                                    Добавить в корзину
+                                </button>
+                            </div>
+                        </div>
+                        <h3>${product.name}</h3>
+                        <span>${product.price} ₽</span>
+                    </div>
+                `).join('');
+            }
+        } catch(e) {
+            console.error('Ошибка загрузки слайдеров:', e);
+        }
+    }
+    
+    // Запускаем загрузку после загрузки страницы
+    document.addEventListener('DOMContentLoaded', loadSliders);
+</script>
 </body>
 
 </html>

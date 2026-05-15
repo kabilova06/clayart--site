@@ -229,6 +229,12 @@
             <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
                 <input type="checkbox" id="productSummer"> Летняя коллекция 2026
             </label>
+            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+    <input type="checkbox" id="productBestseller"> ⭐ Бестселлер (показывать на главной)
+</label>
+<label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+    <input type="checkbox" id="productNew"> 🆕 Новинка (показывать на главной)
+</label>
             <div class="modal-buttons">
                 <button onclick="saveProduct()">💾 Сохранить</button>
                 <button onclick="closeModal()" style="background:#eee;">Отмена</button>
@@ -304,6 +310,8 @@
 
         function openAddModal() {
             editId = null;
+            document.getElementById('productBestseller').checked = false;
+            document.getElementById('productNew').checked = false;
             document.getElementById('modalTitle').innerText = 'Добавить товар';
             document.getElementById('productId').value = '';
             document.getElementById('productName').value = '';
@@ -341,6 +349,8 @@
 
         async function saveProduct() {
             const product = {
+                is_bestseller: document.getElementById('productBestseller').checked ? 1 : 0,
+                is_new: document.getElementById('productNew').checked ? 1 : 0,
                 name: document.getElementById('productName').value,
                 price: parseInt(document.getElementById('productPrice').value) || 0,
                 category: document.getElementById('productCategory').value,
