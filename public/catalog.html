@@ -193,16 +193,37 @@
     }
 
     // Функция смены цвета товара (переопределяем, чтобы работала с динамическими элементами)
-    window.changeProductImage = function(element, newImage) {
-        const productCard = element.closest('.product-card');
-        if (!productCard) return;
-        const image = productCard.querySelector('.product-image');
-        if (image) image.src = newImage;
-        
-        const dots = productCard.querySelectorAll('.color-dot');
-        dots.forEach(dot => dot.classList.remove('active'));
-        element.classList.add('active');
-    };
+    function changeProductImage(element, newImage) {
+    // Ищем карточку товара (поднимаемся вверх по DOM)
+    let productCard = element.closest('.product-card');
+    
+    // Если не нашли через closest, пробуем другой способ
+    if (!productCard) {
+        productCard = element.parentElement?.parentElement;
+    }
+    
+    if (!productCard) {
+        console.log('Не найдена карточка товара');
+        return;
+    }
+    
+    // Находим изображение в карточке
+    const image = productCard.querySelector('.product-image');
+    if (!image) {
+        console.log('Не найдено изображение');
+        return;
+    }
+    
+    // Меняем фото
+    image.src = newImage;
+    
+    // Активный кружок
+    const dots = productCard.querySelectorAll('.color-dot');
+    dots.forEach(dot => {
+        dot.classList.remove('active');
+    });
+    element.classList.add('active');
+}
 
     // Фильтрация по кнопкам
     function setupFilters() {
