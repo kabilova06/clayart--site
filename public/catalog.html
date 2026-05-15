@@ -133,54 +133,64 @@
 
     // Отображение товаров
     function renderProducts() {
-        let filtered = filterProductsByCategory(allProducts, currentFilter);
-        let sorted = sortProductsBy(filtered, currentSort);
-        
-        const container = document.getElementById('productsContainer');
-        
-        if (sorted.length === 0) {
-            container.innerHTML = '<div class="no-products">😢 Товары не найдены</div>';
-            return;
+    let filtered = filterProductsByCategory(allProducts, currentFilter);
+    let sorted = sortProductsBy(filtered, currentSort);
+    
+    const container = document.getElementById('productsContainer');
+    
+    if (sorted.length === 0) {
+        container.innerHTML = '<div class="no-products">😢 Товары не найдены</div>';
+        return;
+    }
+    
+    container.innerHTML = sorted.map(product => {
+        // ПРОВЕРКА: если color_variants строка, превращаем в массив
+        let colorVariants = product.color_variants;
+        if (typeof colorVariants === 'string') {
+            try {
+                colorVariants = JSON.parse(colorVariants);
+            } catch(e) {
+                colorVariants = [];
+            }
+        }
+        if (!Array.isArray(colorVariants)) {
+            colorVariants = [];
         }
         
-        container.innerHTML = sorted.map(product => {
-            const colorVariants = product.color_variants || [];
-            const isSummer = product.is_summer === 1;
-            const summerBadge = isSummer ? '<div class="summer-badge">SUMMER 2026</div>' : '';
-            
-            // Создаем HTML для выбора цвета, если есть варианты
-            let colorHtml = '';
-            if (colorVariants.length > 1) {
-                const colorDots = colorVariants.map((img, idx) => {
-                    // Определяем цвет кружка по изображению (для красоты)
-                    let bgColor = '#7c5739';
-                    if (img.includes('white')) bgColor = '#c9c9c9';
-                    if (img.includes('black')) bgColor = '#1e1e1e';
-                    if (img.includes('blue')) bgColor = '#508288';
-                    if (img.includes('brown')) bgColor = '#2a2a2a';
-                    return `<div class="color-dot" style="background:${bgColor}" onclick="changeProductImage(this, '${img}')"></div>`;
-                }).join('');
-                colorHtml = `<div class="color-options">${colorDots}</div>`;
-            }
-            
-            return `
-                <div class="product-card" data-category="${product.category}" data-id="${product.id}" data-summer="${isSummer}">
-                    ${summerBadge}
-                    <img src="${product.image || '/images/placeholder.jpg'}" 
-                         class="product-image" 
-                         onclick="openImage(this.src)" 
-                         alt="${product.name}">
-                    <h3>${escapeHtml(product.name)}</h3>
-                    <p>${escapeHtml(product.description || 'Керамическое изделие ручной работы')}</p>
-                    ${colorHtml}
-                    <div class="price">${product.price} ₽</div>
-                    <button onclick="addToCart(this, '${escapeHtml(product.name)}', ${product.price}, event)">
-                        Добавить в корзину
-                    </button>
-                </div>
-            `;
-        }).join('');
-    }
+        const isSummer = product.is_summer === 1;
+        const summerBadge = isSummer ? '<div class="summer-badge">SUMMER 2026</div>' : '';
+        
+        let colorHtml = '';
+        if (colorVariants.length > 1) {
+            const colorDots = colorVariants.map((img, idx) => {
+                let bgColor = '#7c5739';
+                if (img.includes('white')) bgColor = '#c9c9c9';
+                if (img.includes('black')) bgColor = '#1e1e1e';
+                if (img.includes('blue')) bgColor = '#508288';
+                if (img.includes('brown')) bgColor = '#2a2a2a';
+                return `<div class="color-dot" style="background:${bgColor}" onclick="changeProductImage(this, '${img}')"></div>`;
+            }).join('');
+            colorHtml = `<div class="color-options">${colorDots}</div>`;
+        }
+        
+        return `
+            <div class="product-card" data-category="${product.category}" data-id="${product.id}" data-summer="${isSummer}">
+                ${summerBadge}
+                <img src="${product.image || '/images/placeholder.jpg'}" 
+                     class="product-image" 
+                     onclick="openImage(this.src)" 
+                     alt="${escapeHtml(product.name)}">
+                <h3>${escapeHtml(product.name)}</h3>
+                <p>${escapeHtml(product.description || 'Керамическое изделие ручной работы')}</p>
+                ${colorHtml}
+                <div class="price">${product.price} ₽</div>
+                <button onclick="addToCart(this, '${escapeHtml(product.name).replace(/'/g, "\\'")}', ${product.price}, event)">
+                    Добавить в корзину
+                </button>
+            </div>
+        `;
+    }).join('');
+}
 
     function escapeHtml(str) {
         if (!str) return '';
