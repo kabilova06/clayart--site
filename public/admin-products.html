@@ -230,11 +230,11 @@
                 <input type="checkbox" id="productSummer"> Летняя коллекция 2026
             </label>
             <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-    <input type="checkbox" id="productBestseller"> ⭐ Бестселлер (показывать на главной)
-</label>
-<label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-    <input type="checkbox" id="productNew"> 🆕 Новинка (показывать на главной)
-</label>
+                <input type="checkbox" id="productBestseller"> ⭐ Бестселлер (показывать на главной)
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                <input type="checkbox" id="productNew"> 🆕 Новинка (показывать на главной)
+            </label>
             <div class="modal-buttons">
                 <button onclick="saveProduct()">💾 Сохранить</button>
                 <button onclick="closeModal()" style="background:#eee;">Отмена</button>
@@ -243,21 +243,11 @@
     </div>
 
     <script>
-        let token = localStorage.getItem('admin_token');
-        
-        // Проверка авторизации
-        if (!token) {
-            window.location.href = '/admin';
-        }
-
         async function loadProducts() {
             try {
-                const response = await fetch('/api/admin/products', {
-                    headers: { 'Authorization': token }
-                });
+                const response = await fetch('/api/admin/products');
                 if (response.status === 401) {
                     localStorage.removeItem('admin_token');
-                    window.location.href = '/admin';
                     return;
                 }
                 const products = await response.json();
@@ -326,9 +316,7 @@
 
         async function editProduct(id) {
             try {
-                const response = await fetch(`/api/admin/products/${id}`, {
-                    headers: { 'Authorization': token }
-                });
+                const response = await fetch(`/api/admin/products/${id}`);
                 const product = await response.json();
                 
                 editId = id;
@@ -341,6 +329,8 @@
                 document.getElementById('productImage').value = product.image || '';
                 document.getElementById('productColors').value = product.color_variants ? JSON.stringify(product.color_variants) : '';
                 document.getElementById('productSummer').checked = product.is_summer === 1;
+                document.getElementById('productBestseller').checked = product.is_bestseller === 1;
+                document.getElementById('productNew').checked = product.is_new === 1;
                 document.getElementById('modal').classList.add('active');
             } catch(e) {
                 alert('Ошибка загрузки товара');
@@ -349,15 +339,15 @@
 
         async function saveProduct() {
             const product = {
-                is_bestseller: document.getElementById('productBestseller').checked ? 1 : 0,
-                is_new: document.getElementById('productNew').checked ? 1 : 0,
                 name: document.getElementById('productName').value,
                 price: parseInt(document.getElementById('productPrice').value) || 0,
                 category: document.getElementById('productCategory').value,
                 description: document.getElementById('productDescription').value,
                 image: document.getElementById('productImage').value,
                 color_variants: document.getElementById('productColors').value ? JSON.parse(document.getElementById('productColors').value) : [],
-                is_summer: document.getElementById('productSummer').checked ? 1 : 0
+                is_summer: document.getElementById('productSummer').checked ? 1 : 0,
+                is_bestseller: document.getElementById('productBestseller').checked ? 1 : 0,
+                is_new: document.getElementById('productNew').checked ? 1 : 0
             };
             
             try {
@@ -365,13 +355,13 @@
                 if (editId) {
                     response = await fetch(`/api/admin/products/${editId}`, {
                         method: 'PUT',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(product)
                     });
                 } else {
                     response = await fetch('/api/admin/products', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(product)
                     });
                 }
@@ -392,8 +382,7 @@
             if (confirm('Удалить товар? Это действие нельзя отменить.')) {
                 try {
                     const response = await fetch(`/api/admin/products/${id}`, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': token }
+                        method: 'DELETE'
                     });
                     if (response.ok) {
                         loadProducts();
@@ -411,13 +400,11 @@
             document.getElementById('modal').classList.remove('active');
         }
 
-        // Закрытие по клику вне окна
         document.getElementById('modal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
-<a href="/admin-orders.html" class="nav-link">📦 Заказы</a>
+
         loadProducts();
-        
     </script>
 </body>
 </html>
