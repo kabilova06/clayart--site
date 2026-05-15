@@ -9,6 +9,68 @@
     <title>Каталог — ClayArt</title>
 
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Стили для пагинации */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+        .pagination button {
+            padding: 10px 16px;
+            background: white;
+            border: 1px solid #e0ddd9;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+        }
+        .pagination button:hover {
+            background: #d8c3a5;
+            border-color: #d8c3a5;
+        }
+        .pagination button.active {
+            background: #d8c3a5;
+            border-color: #d8c3a5;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .search-info {
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .search-box {
+            margin-bottom: 25px;
+            text-align: right;
+        }
+        .search-box input {
+            padding: 10px 20px;
+            width: 100%;
+            max-width: 300px;
+            border-radius: 40px;
+            border: 1px solid #e0ddd9;
+            font-family: 'Montserrat', sans-serif;
+        }
+        @media(max-width: 768px) {
+            .search-box {
+                text-align: center;
+            }
+            .search-box input {
+                max-width: 100%;
+            }
+            .pagination button {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
 <header>
@@ -50,7 +112,7 @@
                 </li>
 
                 <li>
-                    <a href="catalog.html">
+                    <a href="contacts.html">
                         Контакты
                     </a>
                 </li>
@@ -74,16 +136,22 @@
 <section class="catalog container">
 
     <h2>Каталог изделий</h2>
+    
+    <!-- ПОЛЕ ПОИСКА -->
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Поиск по товарам..." autocomplete="off">
+    </div>
+    
     <div class="catalog-filters">
 
     <button class="filter-btn active"
             onclick="filterProducts('all', this)">
         Все
     </button>
-<button class="filter-btn"
-onclick="filterProducts('summer', this)">
-    Summer Collection
-</button>
+    <button class="filter-btn"
+            onclick="filterProducts('summer', this)">
+        Summer Collection
+    </button>
     <button class="filter-btn"
             onclick="filterProducts('mugs', this)">
         Кружки
@@ -138,8 +206,11 @@ onclick="filterProducts('summer', this)">
 
 </div>
 
-    <div class="products">
+    <div id="searchInfo" class="search-info"></div>
 
+    <div class="products" id="productsContainer">
+
+        <!-- ВСЕ ТВОИ ТОВАРЫ ОСТАЮТСЯ ЗДЕСЬ -->
         <div class="product-card" data-category="mugs" data-order="1">
 
     <img src="images/cup-beige.jpg"
@@ -846,6 +917,9 @@ onclick="filterProducts('summer', this)">
 </div>
     </div>
 
+    <!-- ПАГИНАЦИЯ -->
+    <div id="pagination" class="pagination"></div>
+
 </section>
 
 <footer>
@@ -856,12 +930,186 @@ onclick="filterProducts('summer', this)">
 </footer>
 
 <div class="image-modal" id="imageModal">
-
     <img src="" id="modalImage">
-
 </div>
 
 <script src="js/script.js"></script>
+
+<script>
+    // ПАГИНАЦИЯ И ПОИСК (РАБОТАЕТ С СУЩЕСТВУЮЩИМИ ТОВАРАМИ)
+    let currentPage = 1;
+    const productsPerPage = 12;
+    let currentSearch = '';
+    let currentFilterCategory = 'all';
+    let allProductsElements = [];
+
+    // Собираем все товары при загрузке
+    function collectProducts() {
+        allProductsElements = Array.from(document.querySelectorAll('.product-card'));
+    }
+
+    // Фильтрация по категории (с учётом поиска)
+    function getFilteredProducts() {
+        let filtered = allProductsElements;
+        
+        // Фильтр по категории
+        if (currentFilterCategory !== 'all') {
+            filtered = filtered.filter(product => {
+                const category = product.getAttribute('data-category');
+                if (currentFilterCategory === 'summer') {
+                    return category && category.includes('summer');
+                }
+                return category === currentFilterCategory;
+            });
+        }
+        
+        // Фильтр по поиску
+        if (currentSearch) {
+            const searchLower = currentSearch.toLowerCase();
+            filtered = filtered.filter(product => {
+                const title = product.querySelector('h3').innerText.toLowerCase();
+                return title.includes(searchLower);
+            });
+        }
+        
+        return filtered;
+    }
+
+    // Обновление отображения товаров и пагинации
+    function updateDisplay() {
+        const filtered = getFilteredProducts();
+        const totalPages = Math.ceil(filtered.length / productsPerPage);
+        
+        // Корректируем текущую страницу
+        if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+        
+        // Скрываем все товары
+        allProductsElements.forEach(product => {
+            product.style.display = 'none';
+        });
+        
+        // Показываем товары только для текущей страницы
+        const startIndex = (currentPage - 1) * productsPerPage;
+        const endIndex = startIndex + productsPerPage;
+        const productsToShow = filtered.slice(startIndex, endIndex);
+        
+        productsToShow.forEach(product => {
+            product.style.display = 'flex';
+        });
+        
+        // Обновляем информацию о поиске
+        const searchInfo = document.getElementById('searchInfo');
+        if (currentSearch) {
+            searchInfo.innerHTML = `🔍 Найдено ${filtered.length} товаров по запросу "${currentSearch}"`;
+        } else {
+            searchInfo.innerHTML = '';
+        }
+        
+        // Обновляем пагинацию
+        renderPagination(totalPages);
+    }
+
+    // Отображение кнопок пагинации
+    function renderPagination(totalPages) {
+        const paginationDiv = document.getElementById('pagination');
+        if (totalPages <= 1) {
+            paginationDiv.innerHTML = '';
+            return;
+        }
+        
+        let buttons = [];
+        buttons.push(`<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>←</button>`);
+        
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, currentPage + 2);
+        
+        if (startPage > 1) {
+            buttons.push(`<button onclick="goToPage(1)">1</button>`);
+            if (startPage > 2) buttons.push(`<span style="padding: 10px;">...</span>`);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            buttons.push(`<button onclick="goToPage(${i})" class="${i === currentPage ? 'active' : ''}">${i}</button>`);
+        }
+        
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) buttons.push(`<span style="padding: 10px;">...</span>`);
+            buttons.push(`<button onclick="goToPage(${totalPages})">${totalPages}</button>`);
+        }
+        
+        buttons.push(`<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>→</button>`);
+        
+        paginationDiv.innerHTML = buttons.join('');
+    }
+
+    function goToPage(page) {
+        const filtered = getFilteredProducts();
+        const totalPages = Math.ceil(filtered.length / productsPerPage);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        updateDisplay();
+        window.scrollTo({ top: 300, behavior: 'smooth' });
+    }
+
+    // Поиск
+    function setupSearch() {
+        const searchInput = document.getElementById('searchInput');
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentSearch = this.value;
+                currentPage = 1;
+                updateDisplay();
+            }, 300);
+        });
+    }
+
+    // Переопределяем filterProducts из script.js
+    const originalFilterProducts = window.filterProducts;
+    window.filterProducts = function(category, button) {
+        currentFilterCategory = category;
+        currentPage = 1;
+        
+        // Обновляем активную кнопку
+        const buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        updateDisplay();
+        
+        // Вызываем оригинальную функцию для совместимости
+        if (originalFilterProducts) {
+            originalFilterProducts(category, button);
+        }
+    };
+
+    // Переопределяем sortProducts из script.js
+    const originalSortProducts = window.sortProducts;
+    window.sortProducts = function(type) {
+        if (originalSortProducts) {
+            originalSortProducts(type);
+        }
+        // Пересобираем товары и обновляем отображение
+        setTimeout(() => {
+            collectProducts();
+            currentPage = 1;
+            updateDisplay();
+        }, 100);
+    };
+
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+            collectProducts();
+            setupSearch();
+            updateDisplay();
+        }, 100);
+    });
+    
+    window.goToPage = goToPage;
+</script>
 
 </body>
 </html>
