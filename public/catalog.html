@@ -1,0 +1,864 @@
+<!-- catalog.html -->
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог — ClayArt</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+
+    <div class="container">
+
+        <h1 class="logo">ClayArt</h1>
+
+        <nav>
+            <ul>
+            </li>
+               <a href="index.html">
+                        Главная
+                    </a>
+                </li>
+
+                <li>
+                    <a href="catalog.html" class="active">
+                        Каталог
+                    </a>
+                </li>
+
+                <li>
+                    <a href="about.html">
+                        О компании
+                    </a>
+                </li>
+
+                <li>
+                    <a href="gallery.html">
+                        Галерея
+                    </a>
+                </li>
+
+                <li>
+                     <a href="reviews.html">
+                        Отзывы
+                    </a>
+                </li>
+
+                <li>
+                    <a href="catalog.html">
+                        Контакты
+                    </a>
+                </li>
+                <li>
+                    <a href="faq.html">
+                        FAQ
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <a href="cart.html" class="cart">
+            <img src="images/cart.svg" class="cart-icon"> Корзина:
+            <span id="cart-count">0</span>
+        </a>
+
+    </div>
+
+</header>
+
+<section class="catalog container">
+
+    <h2>Каталог изделий</h2>
+    <div class="catalog-filters">
+
+    <button class="filter-btn active"
+            onclick="filterProducts('all', this)">
+        Все
+    </button>
+<button class="filter-btn"
+onclick="filterProducts('summer', this)">
+    Summer Collection
+</button>
+    <button class="filter-btn"
+            onclick="filterProducts('mugs', this)">
+        Кружки
+    </button>
+
+    <button class="filter-btn"
+            onclick="filterProducts('plates', this)">
+        Тарелки
+    </button>
+
+    <button class="filter-btn"
+            onclick="filterProducts('vases', this)">
+        Вазы
+    </button>
+
+    <button class="filter-btn"
+            onclick="filterProducts('teapots', this)">
+        Чайники
+    </button>
+
+    <button class="filter-btn"
+            onclick="filterProducts('decor', this)">
+        Декор
+    </button>
+
+</div>
+<div class="catalog-sort">
+
+    <select onchange="sortProducts(this.value)">
+
+        <option value="default">
+            Сортировка (по умолчанию)
+        </option>
+
+        <option value="price-asc">
+            Цена: по возрастанию
+        </option>
+
+        <option value="price-desc">
+            Цена: по убыванию
+        </option>
+
+        <option value="name-asc">
+            По алфавиту: А-Я
+        </option>
+
+        <option value="name-desc">
+            По алфавиту: Я-А
+        </option>
+
+    </select>
+
+</div>
+
+    <div class="products">
+
+        <div class="product-card" data-category="mugs" data-order="1">
+
+    <img src="images/cup-beige.jpg"
+         class="product-image"
+         onclick="openImage(this.src)"
+         alt="">
+
+    <h3>Кружка "Гармония"</h3>
+
+    <p>
+       Тёплая кружка ручной работы для уютных моментов.
+Приятный матовый оттенок и удобная форма — идеальна для чая или кофе. 
+    </p>
+
+    <div class="color-options">
+
+        <div class="color-dot"
+             style="background:#7c5739;"
+             onclick="changeProductImage(
+             this,
+             'images/cup-beige.jpg'
+             )">
+        </div>
+
+        <div class="color-dot"
+             style="background:#c9c9c9;"
+             onclick="changeProductImage(
+             this,
+             'images/cup-white.jpg'
+             )">
+        </div>
+
+    </div>
+
+    <div class="price">
+        1200 ₽
+    </div>
+
+    <button onclick="addToCart(this,'Кружка «Гармония» ', 1200, event)">
+        Добавить в корзину
+    </button>
+
+</div>
+<div class="product-card" data-category="summer mugs" data-order="2">
+<div class="summer-badge">
+    SUMMER 2026
+</div>
+            <img src="images/sumcup1.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Кружка «Тюльпан»</h3>
+
+            <p>
+                Нежная керамическая кружка с наивным цветочным рисунком. 
+                Привносит уют и весеннее настроение в любое утро.
+            </p>
+
+            <div class="price">1900 ₽</div>
+
+            <button onclick="addToCart(this, 'Кружка «Тюльпан»', 1900, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+        <div class="product-card" data-category="plates" data-order="3">
+
+    <img src="images/bowl-beige.jpg"
+         class="product-image"
+         onclick="openImage(this.src)"
+         alt="">
+
+    <h3>Миска «Линия»</h3>
+
+    <p>
+     Элегантная керамическая миска в современном стиле.
+Подходит для подачи завтрака, салатов или десертов.
+    </p>
+
+    <div class="color-options">
+
+        <div class="color-dot"
+             style="background:#7c5739;"
+             onclick="changeProductImage(
+             this,
+             'images/bowl-beige.jpg'
+             )">
+        </div>
+
+        <div class="color-dot"
+             style="background:#508288;"
+             onclick="changeProductImage(
+             this,
+             'images/bowl-blue.jpg'
+             )">
+        </div>
+
+    </div>
+
+    <div class="price">
+        1900 ₽
+    </div>
+
+    <button onclick="addToCart(this, 'Миска «Линия»', 1900, event)">
+        Добавить в корзину
+    </button>
+
+</div>
+        <div class="product-card" data-category="mugs" data-order="4">
+
+            <img src="images/cup2.jpg"
+                 class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Набор «Тишина»</h3>
+
+            <p>
+               Две пастельные кружки для спокойных вечеров.
+Созданы для совместных разговоров и уюта.
+            </p>
+
+            <div class="price">2400 ₽</div>
+
+            <button onclick="addToCart(this, 'Набор «Тишина»', 2400, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+               <div class="product-card" data-category="summer plates" data-order="5">
+<div class="summer-badge">
+    SUMMER 2026
+</div>
+            <img src="images/sumpl1.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Миска «Сад у дома»</h3>
+
+            <p>
+                Ручная лепка, зелёный кант и миниатюрные бутоны. 
+                Создана для тёплых семейных обедов.
+            </p>
+
+            <div class="price">2500 ₽</div>
+
+            <button onclick="addToCart(this,'Миска «Сад у дома»', 2500, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+                <div class="product-card" data-category="mugs" data-order="6">
+
+            <img src="images/cup3.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Кружка «Торф»</h3>
+
+            <p>
+            Темный оттенок с легким природным узором.
+Отлично смотрится в современной и классической кухне.
+
+            </p>
+
+            <div class="price">1300 ₽</div>
+
+            <button onclick="addToCart(this, 'Кружка «Торф»', 1300, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+<div class="product-card" data-category="summer mugs" data-order="7">
+<div class="summer-badge">
+    SUMMER 2026
+</div>
+
+            <img src="images/sumcup2.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Кружка «Весенний луг»</h3>
+
+            <p>
+                Лёгкий цветочный орнамент и мягкие линии ручной лепки. 
+                Для медленных завтраков и ароматного чая.
+            </p>
+
+            <div class="price">1900 ₽</div>
+
+            <button onclick="addToCart(this,'Кружка «Весенний луг»', 1900, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+
+               <div class="product-card" data-category="summer mugs" data-order="8">
+<div class="summer-badge">
+    SUMMER 2026
+</div>
+            <img src="images/sumcup4.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Кружка «Цветочный дождь»</h3>
+
+            <p>
+                Мелкие красные цветы поднимают настроение даже в пасмурную погоду. 
+                Простая радость — в каждой детали.
+            </p>
+
+            <div class="price">1900 ₽</div>
+
+            <button onclick="addToCart(this,'Кружка «Цветочный дождь»', 1900, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+
+        <div class="product-card" data-category="plates" data-order="9">
+
+    <img src="images/plate-beige.jpg"
+         class="product-image"
+         onclick="openImage(this.src)"
+         alt="">
+
+    <h3>Набор тарелок «Естественность»</h3>
+
+    <p>
+        Три тарелки необычной формы придают сервировке индивидуальность.
+Натуральные цвета и ручная работа создают атмосферу уюта.
+    </p>
+
+    <div class="color-options">
+
+        <div class="color-dot"
+             style="background:#2a2a2a;"
+             onclick="changeProductImage(
+             this,
+             'images/plate-brown.jpg'
+             )">
+        </div>
+
+        <div class="color-dot"
+             style="background:#c7ab8b;"
+             onclick="changeProductImage(
+             this,
+             'images/plate-beige.jpg'
+             )">
+        </div>
+         <div class="color-dot"
+             style="background:#dddddd;"
+             onclick="changeProductImage(
+             this,
+             'images/plate-white.jpg'
+             )">
+        </div>
+
+    </div>
+
+    <div class="price">
+        5000 ₽
+    </div>
+
+    <button onclick="addToCart(this,'Набор тарелок «Естественность»', 5000, event)">
+        Добавить в корзину
+    </button>
+
+</div>
+                <div class="product-card" data-category="mugs" data-order="10">
+
+            <img src="images/cup4.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Набор кружек «Песочный берег»</h3>
+
+            <p>
+            Тёплый беж с мягкими, как волны, линиями глазури.
+            Набор из 3-х кружек подарит покой и уют в любой дом.
+            </p>
+
+            <div class="price">3900 ₽</div>
+
+            <button onclick="addToCart(this,'Набор кружек «Песочный берег»', 3900, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+               <div class="product-card" data-category="summer plates" data-order="11">
+<div class="summer-badge">
+    SUMMER 2026
+</div>
+            <img src="images/sumpl2.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Миска «Рассвет»</h3>
+
+            <p>
+                Лепестки, обрамляющие край, как первые лучи солнца. 
+                Идеальна для каши, фруктов или просто хорошего настроения.
+            </p>
+
+            <div class="price">2500 ₽</div>
+
+            <button onclick="addToCart(this,'Миска «Рассвет»', 2500, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+                        <div class="product-card" data-category="mugs" data-order="12">
+
+            <img src="images/cup5.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Кружка «Лесная тропа»</h3>
+
+            <p>
+        Глубокий зелёный цвет с лёгкими вкраплениями.
+        Навевает мысли о прогулках в тенистом лесу.
+            </p>
+
+            <div class="price">1400 ₽</div>
+
+            <button onclick="addToCart(this,'Кружка «Лесная тропа»', 1400, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+               <div class="product-card" data-category="summer mugs" data-order="13">
+<div class="summer-badge">
+    SUMMER 2026
+</div>
+            <img src="images/sumcup5.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Кружка «Апельсиновая роща»</h3>
+
+            <p>
+                Сочные апельсины и мягкий блеск глазури. 
+                Наполняет день бодростью и свежестью.
+            </p>
+
+            <div class="price">1900 ₽</div>
+
+            <button onclick="addToCart(this,'Кружка «Апельсиновая роща»', 1900, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+        <div class="product-card" data-category="vases" data-order="14">
+
+    <img src="images/vase4-beige.jpg"
+         class="product-image"
+         onclick="openImage(this.src)"
+         alt="">
+
+    <h3>Ваза «Скала»</h3>
+
+    <p>
+        Авторская керамическая ваза с выразительной фактурой.
+Станет необычным украшением интерьера или стильным подарком
+    </p>
+
+    <div class="color-options">
+
+        <div class="color-dot"
+             style="background:#a08167;"
+             onclick="changeProductImage(
+             this,
+             'images/vase4-beige.jpg'
+             )">
+        </div>
+
+        <div class="color-dot"
+             style="background:#000000;"
+             onclick="changeProductImage(
+             this,
+             'images/vase4-black.jpg'
+             )">
+        </div>
+
+    </div>
+
+    <div class="price">
+        5300 ₽
+    </div>
+
+    <button onclick="addToCart(this,'Ваза «Скала»',5300, event)">
+        Добавить в корзину
+    </button>
+
+</div>
+               <div class="product-card" data-category="summer plates" data-order="15">
+<div class="summer-badge">
+    SUMMER 2026
+</div>
+            <img src="images/sumpl3.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Тарелка «Цветочное полотно»</h3>
+
+            <p>
+               Праздничный узор из весенних тюльпанов, обведённый бирюзовым кантом. 
+               Прекрасно сочетается с другими изделиями коллекции.
+            </p>
+
+            <div class="price">2400 ₽</div>
+
+            <button onclick="addToCart(this,'Тарелка «Цветочное полотно»', 2400, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+<div class="product-card" data-category="vases" data-order="16">
+
+    <img src="images/vase2-beige.jpg"
+         class="product-image"
+         onclick="openImage(this.src)"
+         alt="">
+
+    <h3>Ваза «Ветер»</h3>
+
+    <p>
+        Современная ваза с плавными, воздушными линиями.
+Воплощает движение и лёгкость, акцент в любом пространстве.
+    </p>
+
+    <div class="color-options">
+
+        <div class="color-dot"
+             style="background:#cccac9;"
+             onclick="changeProductImage(
+             this,
+             'images/vase2-white.jpg'
+             )">
+        </div>
+        <div class="color-dot"
+             style="background:#131313;"
+             onclick="changeProductImage(
+             this,
+             'images/vase2-black.jpg'
+             )">
+        </div>
+        <div class="color-dot"
+             style="background:#7d7769;"
+             onclick="changeProductImage(
+             this,
+             'images/vase2-beige.jpg'
+             )">
+        </div>
+    </div>
+    <div class="price">
+        6000 ₽
+    </div>
+
+    <button onclick="addToCart(this,'Ваза «Ветер»', 6000, event)">
+        Добавить в корзину
+    </button>
+</div>
+        <div class="product-card" data-category="plates" data-order="17">
+
+            <img src="images/pottery3.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Тарелка «Шум»</h3>
+
+            <p>
+                Керамическая тарелка ручной работы с оригинальной росписью.
+Возможна персонализация — добавьте индивидуальности своему столу.
+            </p>
+
+            <div class="price">1700 ₽</div>
+
+            <button onclick="addToCart(this,'Тарелка «Шум»', 1700, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+                <div class="product-card" data-category="vases" data-order="18">
+
+            <img src="images/vase3-white.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Ваза «Свет»</h3>
+
+            <p>
+              Стильная керамическая ваза со светлой матовой поверхностью.
+Подходит для цветов или как самостоятельный арт-объект.
+            </p>
+
+            <div class="price">4400 ₽</div>
+
+            <button onclick="addToCart(this,'Ваза «Свет»', 4400, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+        
+     <div class="product-card" data-category="plates" data-order="19">
+    <img src="images/set1-beige.jpg"
+         class="product-image"
+         onclick="openImage(this.src)"
+         alt="">
+
+    <h3>Набор тарелок «Тёплый ужин»</h3>
+
+    <p>
+       Набор из керамики разных размеров для подачи ужина или завтрака.
+Тёплые натуральные оттенки создадут уют на вашей кухне.
+    </p>
+
+    <div class="color-options">
+
+        <div class="color-dot"
+             style="background:#7c5739;"
+             onclick="changeProductImage(
+             this,
+             'images/set1-beige.jpg'
+             )">
+        </div>
+        <div class="color-dot"
+             style="background:#131313;"
+             onclick="changeProductImage(
+             this,
+             'images/set1-black.jpg'
+             )">
+        </div>
+       <div class="color-dot"
+             style="background:#4a342b;"
+             onclick="changeProductImage(
+             this,
+             'images/set1-brown.jpg'
+             )">
+        </div>
+               <div class="color-dot"
+             style="background:#63573c;"
+             onclick="changeProductImage(
+             this,
+             'images/set1-librown.jpg'
+             )">
+        </div>
+    </div>
+    <div class="price">
+        5300 ₽
+    </div>
+
+    <button onclick="addToCart(this, 'Набор тарелок «Тёплый ужин»', 5300, event)">
+        Добавить в корзину
+    </button>
+
+</div>
+
+<div class="product-card" data-category="teapots" data-order="20">
+
+    <img src="images/pottery5.jpg"
+        class="product-image"
+         onclick="openImage(this.src)"
+         alt="">
+
+    <h3>Чайник «Пауза»</h3>
+
+    <p>
+        Стильный керамический чайник ручной работы для душевных чаепитий.
+Сочетает лаконичный дизайн и удобную форму, отлично держит тепло.
+    </p>
+
+    <div class="price">4100 ₽</div>
+
+    <button onclick="addToCart(this, 'Чайник «Пауза»', 4100, event)">
+        Добавить в корзину
+    </button>
+
+</div>
+               <div class="product-card" data-category="summer plates" data-order="21">
+<div class="summer-badge">
+    SUMMER 2026
+</div>
+            <img src="images/sumpl4.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Тарелка «Лесная поляна»</h3>
+
+            <p>
+               Тонкий зелёный кант и миниатюрные цветы по краю.
+Добавит лёгкости и уюта к любому завтраку или десерту.
+            </p>
+
+            <div class="price">2400 ₽</div>
+
+            <button onclick="addToCart(this, 'Тарелка «Лесная поляна»', 2400, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+                <div class="product-card" data-category="summer mugs" data-order="22">
+<div class="summer-badge">
+    SUMMER 2026
+</div>
+            <img src="images/sumcup3.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Кружка «Клубничное лето»</h3>
+
+            <p>
+                Яркие ягоды и солнечное настроение в каждом глотке. 
+                Напоминает о тёплых днях и домашних десертах.
+            </p>
+
+            <div class="price">1900 ₽</div>
+
+            <button onclick="addToCart(this, 'Кружка «Клубничное лето»', 1900, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+<div class="product-card" data-category="decor" data-order="23">
+
+    <img src="images/pottery6.jpg"
+        class="product-image"
+         onclick="openImage(this.src)"
+         alt="">
+
+    <h3>Подсвечники «Танец теней»</h3>
+
+    <p>
+        Минималистичные подсвечники, создающие мягкое и тёплое освещение.
+Ручная работа добавляет уют и особое настроение вашему дому.
+    </p>
+
+    <div class="price">3000 ₽</div>
+
+    <button onclick="addToCart(this, 'Подсвечники «Танец теней»', 3000, event)">
+        Добавить в корзину
+    </button>
+
+</div>
+               <div class="product-card" data-category="summer plates" data-order="24">
+<div class="summer-badge">
+    SUMMER 2026
+</div>
+            <img src="images/sumpl5.jpg"
+                class="product-image"
+                 onclick="openImage(this.src)"
+                 alt="">
+
+            <h3>Блюдо «Розовый сад»</h3>
+
+            <p>
+             Свежий рисунок в виде цветущих бутонов на вытянутой форме.
+Идеально для фруктов, выпечки или сервировки летнего стола.
+
+            </p>
+
+            <div class="price">2500 ₽</div>
+
+            <button onclick="addToCart(this, 'Блюдо «Розовый сад»', 2500, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+<div class="product-card" data-category="decor" data-order="25">
+
+    <img src="images/pottery7.jpg"
+        class="product-image"
+         onclick="openImage(this.src)"
+         alt="">
+
+    <h3>Горшок для растений «Лесная скала»</h3>
+
+    <p>
+        Керамический горшок для комнатных растений или декора.
+Приятная фактура и естественные цвета подчеркнут красоту вашей зелени.
+    </p>
+
+    <div class="price">5500 ₽</div>
+
+    <button onclick="addToCart(this, 'Горшок для растений «Лесная скала»', 5500, event)">
+        Добавить в корзину
+    </button>
+
+</div>
+    </div>
+
+</section>
+
+<footer>
+    © 2026 ClayArt
+</footer>
+
+<div class="image-modal" id="imageModal">
+
+    <img src="" id="modalImage">
+
+</div>
+
+<script src="js/script.js"></script>
+
+</body>
+</html>

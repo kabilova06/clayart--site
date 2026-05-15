@@ -1,0 +1,479 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ClayArt</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="container header-container">
+
+        <h1 class="logo">ClayArt</h1>
+        <div class="burger" id="burger">
+            ☰
+        </div>
+        <nav id="mobileMenu">
+            <ul>
+
+                <li>
+                    <a href="index.html"
+                       class="active">
+                        Главная
+                    </a>
+                </li>
+
+                <li>
+                    <a href="catalog.html">
+                        Каталог
+                    </a>
+                </li>
+
+                <li>
+                    <a href="about.html">
+                        О компании
+                    </a>
+                </li>
+
+                <li>
+                    <a href="gallery.html">
+                        Галерея
+                    </a>
+                </li>
+
+                <li>
+                    <a href="reviews.html">
+                        Отзывы
+                    </a>
+                </li>
+
+                <li>
+                    <a href="contacts.html">
+                        Контакты
+                    </a>
+                </li>
+
+                <li>
+                    <a href="faq.html">
+                        FAQ
+                    </a>
+                </li>
+
+            </ul>
+
+        </nav>
+
+        <a href="cart.html"
+           class="cart">
+
+            <img src="images/cart.svg"
+                 class="cart-icon">
+
+            Корзина:
+            <span id="cart-count">0</span>
+
+        </a>
+
+    </div>
+
+</header>
+
+<!-- HERO -->
+
+<section class="hero">
+<div class="summer-banner">
+
+    <span class="summer-label">
+        LIMITED DROP
+    </span>
+
+    <h3>
+        Summer Collection 2026
+    </h3>
+
+    <p>
+        Лимитированная коллекция ручной керамики.
+        Только до 31.08.2026
+    </p>
+
+    <a href="catalog.html?category=summer"
+       class="summer-btn">
+
+        Смотреть коллекцию
+
+    </a>
+
+</div>
+    <div class="hero-content">
+
+        <h2>
+            Авторская керамика ручной работы
+        </h2>
+
+        <p>
+            Эстетика натуральных материалов,
+            минимализм и уникальный дизайн
+        </p>
+
+        <a href="catalog.html"
+           class="btn">
+            Смотреть каталог
+        </a>
+
+    </div>
+
+</section>
+
+<!-- БЕСТСЕЛЛЕРЫ -->
+
+<section class="home-slider-section">
+
+    <div class="container">
+
+        <div class="section-top">
+
+            <h2>Бестселлеры</h2>
+
+            <a href="catalog.html">
+                Смотреть всё
+            </a>
+
+        </div>
+
+        <div class="slider-wrapper">
+
+            <button class="slider-arrow left"
+                    onclick="scrollSlider('bestSlider', -1)">
+                ←
+            </button>
+
+            <div class="home-slider"
+                 id="bestSlider">
+
+                <div class="slider-track">
+
+                 <div class="slider-card">
+
+    <div class="slider-image-wrap">
+
+        <img src="images/cup-beige.jpg"
+             onclick="openImage(this.src)"
+             alt="">
+
+        <div class="slider-overlay">
+
+            <button onclick="addToCart(this,'Кружка «Гармония»',1200, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+
+    </div>
+
+    <h3>Кружка «Гармония»</h3>
+
+    <span>1200 ₽</span>
+
+</div>
+                    <div class="slider-card">
+
+    <div class="slider-image-wrap">
+
+        <img src="images/plate-brown.jpg"
+             onclick="openImage(this.src)"
+             alt="">
+
+        <div class="slider-overlay">
+
+            <button onclick="addToCart(this,'Набор тарелок «Естественность»',5000, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+
+    </div>
+
+    <h3>Набор тарелок «Естественность»</h3>
+
+    <span>5000 ₽</span>
+
+</div>
+
+                    <div class="slider-card">
+
+    <div class="slider-image-wrap">
+
+        <img src="images/pottery3.jpg"
+             onclick="openImage(this.src)"
+             alt="">
+
+        <div class="slider-overlay">
+
+            <button onclick="addToCart(this,'Тарелка «Шум»',1700, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+
+    </div>
+
+    <h3>Тарелка «Шум»</h3>
+
+    <span>1700₽</span>
+
+</div>
+<div class="slider-card">
+
+    <div class="slider-image-wrap">
+
+        <img src="images/vase2-black.jpg"
+             onclick="openImage(this.src)"
+             alt="">
+
+        <div class="slider-overlay">
+
+            <button onclick="addToCart(this,'Ваза «Ветер»',6000, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+
+    </div>
+
+    <h3>Ваза «Ветер»</h3>
+
+    <span>6000 ₽</span>
+
+</div>
+<div class="slider-card">
+
+    <div class="slider-image-wrap">
+
+        <img src="images/pottery5.jpg"
+             onclick="openImage(this.src)"
+             alt="">
+
+        <div class="slider-overlay">
+
+            <button onclick="addToCart(this,'Чайник «Пауза»',4100, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+
+    </div>
+
+    <h3>Чайник «Пауза»</h3>
+
+    <span>4100 ₽</span>
+
+</div>
+
+                </div>
+
+            </div>
+
+            <button class="slider-arrow right"
+                    onclick="scrollSlider('bestSlider', 1)">
+                →
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- НОВИНКИ -->
+
+<section class="home-slider-section new-section">
+
+    <div class="container">
+
+        <div class="section-top">
+
+            <h2>Новинки</h2>
+
+            <a href="catalog.html">
+                Смотреть всё
+            </a>
+
+        </div>
+
+        <div class="slider-wrapper">
+
+            <button class="slider-arrow left"
+                    onclick="scrollSlider('newSlider', -1)">
+                ←
+            </button>
+
+            <div class="home-slider"
+                 id="newSlider">
+
+                <div class="slider-track">
+                    <div class="slider-card">
+  
+    <div class="slider-image-wrap">
+
+        <img src="images/sumcup1.jpg"
+             onclick="openImage(this.src)"
+             alt="">
+
+        <div class="slider-overlay">
+
+            <button onclick="addToCart(this,'Кружка «Тюльпан»',1900, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+
+    </div>
+
+    <h3>Кружка «Тюльпан»</h3>
+
+    <span>1900 ₽</span>
+
+</div>
+                   <div class="slider-card">
+  
+    <div class="slider-image-wrap">
+
+        <img src="images/sumpl5.jpg"
+             onclick="openImage(this.src)"
+             alt="">
+
+        <div class="slider-overlay">
+
+            <button onclick="addToCart(this,'Блюдо «Розовый сад»',2500, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+
+    </div>
+
+    <h3>Блюдо «Розовый сад»</h3>
+
+    <span>2500 ₽</span>
+
+</div>
+                   <div class="slider-card">
+  
+    <div class="slider-image-wrap">
+
+        <img src="images/sumcup5.jpg"
+             onclick="openImage(this.src)"
+             alt="">
+
+        <div class="slider-overlay">
+
+            <button onclick="addToCart(this,'Кружка «Апельсиновая роща»',1900, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+
+    </div>
+
+    <h3>Кружка «Апельсиновая роща»</h3>
+
+    <span>1900 ₽</span>
+
+</div>
+                   <div class="slider-card">
+  
+    <div class="slider-image-wrap">
+
+        <img src="images/sumcup3.jpg"
+             onclick="openImage(this.src)"
+             alt="">
+
+        <div class="slider-overlay">
+
+            <button onclick="addToCart(this,'Кружка «Клубничное лето»',1900, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+
+    </div>
+
+    <h3>Кружка «Клубничное лето»</h3>
+
+    <span>1900 ₽</span>
+
+</div>
+                    <div class="slider-card">
+  
+    <div class="slider-image-wrap">
+
+        <img src="images/sumpl1.jpg"
+             onclick="openImage(this.src)"
+             alt="">
+
+        <div class="slider-overlay">
+
+            <button onclick="addToCart(this,'Миска «Сад у дома»',2500, event)">
+                Добавить в корзину
+            </button>
+
+        </div>
+
+    </div>
+
+    <h3>Миска «Сад у дома»</h3>
+
+    <span>2500 ₽</span>
+
+</div>
+
+                </div>
+
+            </div>
+
+            <button class="slider-arrow right"
+                    onclick="scrollSlider('newSlider', 1)">
+                →
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- МОДАЛКА ФОТО -->
+
+<div class="image-modal"
+     id="imageModal">
+
+    <img src=""
+         id="modalImage">
+
+</div>
+
+<footer>
+
+    © 2026 ClayArt
+
+</footer>
+
+<script src="js/script.js"></script>
+
+</body>
+
+</html>

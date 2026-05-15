@@ -1,0 +1,156 @@
+<!-- cart.html -->
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина — ClayArt</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<script src="js/script.js"></script>
+<body>
+
+<header>
+
+    <div class="container">
+
+        <h1 class="logo">ClayArt</h1>
+
+        <nav>
+            <ul>
+            </li>
+               <a href="index.html">
+                        Главная
+                    </a>
+                </li>
+
+                <li>
+                    <a href="catalog.html">
+                        Каталог
+                    </a>
+                </li>
+
+                <li>
+                    <a href="about.html">
+                        О компании
+                    </a>
+                </li>
+
+                <li>
+                    <a href="gallery.html">
+                        Галерея
+                    </a>
+                </li>
+
+                <li>
+                    <a href="reviews.html">
+                        Отзывы
+                    </a>
+                </li>
+
+                <li>
+                    <a href="contacts.html">
+                        Контакты
+                    </a>
+                </li>
+                <li>
+                    <a href="faq.html">
+                        FAQ
+                    </a>
+                </li>
+            </ul>
+        </nav>
+<a href="cart.html" class="cart">
+            <img src="images/cart.svg" class="cart-icon"> Корзина:
+            <span id="cart-count">0</span>
+        </a>
+    </div>
+
+</header>
+
+<section class="cart-page container">
+
+    <h2>Корзина</h2>
+
+    <div class="cart-layout">
+
+        <!-- ТОВАРЫ -->
+
+        <div class="cart-products-block">
+
+            <div id="cart-items" class="cart-items-list">
+            </div>
+
+        </div>
+
+        <!-- ОФОРМЛЕНИЕ -->
+
+        <div class="checkout-block">
+
+            <div id="total-price" class="cart-total">
+                Общая сумма: 0 ₽
+            </div>
+
+<form id="orderForm" class="checkout-form">
+
+    <input
+        type="text"
+        id="name"
+        placeholder="Ваше имя"
+        required
+    >
+
+    <input
+        type="tel"
+        id="phone"
+        placeholder="Телефон"
+        required
+    >
+
+    <textarea
+        id="address"
+        placeholder="Адрес доставки"
+        required
+    ></textarea>
+
+    <button type="submit">
+        Оформить заказ
+    </button>
+
+</form>
+
+        </div>
+
+    </div>
+
+</section>
+
+<div class="success-modal" id="successModal">
+
+    <div class="success-content">
+
+        <h2>Заказ оформлен</h2>
+
+        <p>
+            Большое спасибо за ваш заказ!
+        </p>
+
+        <button onclick="closeSuccessModal()">
+            Закрыть
+        </button>
+
+    </div>
+
+</div>
+
+<footer>
+    © 2026 ClayArt
+</footer>
+
+<script src="js/script.js"></script>
+
+</body>
+</html>

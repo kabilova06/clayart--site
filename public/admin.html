@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель — Заказы ClayArt</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #f6f3ef;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 42px;
+            font-weight: 300;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .orders-grid {
+            display: grid;
+            gap: 30px;
+        }
+        .order-card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+        .order-card:hover {
+            transform: translateY(-5px);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        .order-number {
+            font-size: 24px;
+            font-weight: 500;
+            color: #d8c3a5;
+        }
+        .order-date {
+            color: #999;
+            font-size: 14px;
+        }
+        .customer-info {
+            background: #f8f5f1;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        .customer-info p {
+            margin: 8px 0;
+            color: #555;
+        }
+        .customer-info strong {
+            color: #1e1e1e;
+        }
+        .items-list {
+            margin-top: 20px;
+        }
+        .items-list h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .item:last-child {
+            border-bottom: none;
+        }
+        .item-name {
+            flex: 1;
+        }
+        .item-price {
+            font-weight: 500;
+            color: #1e1e1e;
+        }
+        .total {
+            margin-top: 20px;
+            padding-top: 20px;
+            text-align: right;
+            font-size: 22px;
+            font-weight: 500;
+            border-top: 2px solid #d8c3a5;
+        }
+        .empty {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 24px;
+            color: #999;
+        }
+        .refresh-btn {
+            display: block;
+            margin: 0 auto 30px;
+            padding: 12px 30px;
+            background: #d8c3a5;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .refresh-btn:hover {
+            background: #1e1e1e;
+            color: white;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #1e1e1e;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 30px;
+            transition: 0.3s;
+        }
+        .back-link:hover {
+            background: #d8c3a5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← На главную</a>
+        <h1>📦 Управление заказами</h1>
+        <button class="refresh-btn" onclick="loadOrders()">🔄 Обновить</button>
+        <div id="ordersContainer" class="orders-grid">
+            <div class="empty">Загрузка заказов...</div>
+        </div>
+    </div>
+
+    <script>
+        async function loadOrders() {
+            const container = document.getElementById('ordersContainer');
+            container.innerHTML = '<div class="empty">Загрузка заказов...</div>';
+            
+            try {
+                const response = await fetch('/api/orders');
+                const orders = await response.json();
+                
+                if (orders.length === 0) {
+                    container.innerHTML = '<div class="empty">Пока нет ни одного заказа 😢</div>';
+                    return;
+                }
+                
+                container.innerHTML = orders.map(order => `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="order-number">Заказ №${order.id}</span>
+                            <span class="order-date">${new Date().toLocaleDateString('ru-RU')}</span>
+                        </div>
+                        <div class="customer-info">
+                            <p><strong>👤 Клиент:</strong> ${escapeHtml(order.customer)}</p>
+                            <p><strong>📞 Телефон:</strong> ${escapeHtml(order.phone)}</p>
+                            <p><strong>📍 Адрес:</strong> ${escapeHtml(order.address)}</p>
+                        </div>
+                        <div class="items-list">
+                            <h3>🛍️ Товары:</h3>
+                            ${JSON.parse(order.items).map(item => `
+                                <div class="item">
+                                    <span class="item-name">${escapeHtml(item.name)}</span>
+                                    <span class="item-price">${item.price} ₽</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="total">
+                            Итого: ${order.total} ₽
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch(error) {
+                console.error('Ошибка:', error);
+                container.innerHTML = '<div class="empty">❌ Ошибка загрузки заказов. Убедитесь, что сервер запущен.</div>';
+            }
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        loadOrders();
+    </script>
+</body>
+</html>
