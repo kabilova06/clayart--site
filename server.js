@@ -10,7 +10,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// Файл для хранения заказов
+// Папка и файл для хранения заказов
 const ordersFile = './database/orders.json';
 
 // Создаём папку database, если её нет
@@ -29,30 +29,37 @@ if (!fs.existsSync(ordersFile)) {
 app.post('/api/order', (req, res) => {
     const { customer, phone, address, items, total } = req.body;
     
-    // Читаем существующие заказы
-    const orders = JSON.parse(fs.readFileSync(ordersFile, 'utf8'));
-    
-    // Создаём новый заказ
-    const newOrder = {
-        id: orders.length + 1,
-        customer,
-        phone,
-        address,
-        items,
-        total,
-        created_at: new Date().toISOString()
-    };
-    
-    orders.push(newOrder);
-    fs.writeFileSync(ordersFile, JSON.stringify(orders, null, 2));
-    
-    res.json({ success: true, orderId: newOrder.id });
+    try {
+        const orders = JSON.parse(fs.readFileSync(ordersFile, 'utf8'));
+        
+        const newOrder = {
+            id: orders.length + 1,
+            customer,
+            phone,
+            address,
+            items,
+            total,
+            created_at: new Date().toISOString()
+        };
+        
+        orders.push(newOrder);
+        fs.writeFileSync(ordersFile, JSON.stringify(orders, null, 2));
+        
+        res.json({ success: true, orderId: newOrder.id });
+    } catch (error) {
+        console.error('Ошибка сохранения заказа:', error);
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
 });
 
 // Получение всех заказов
 app.get('/api/orders', (req, res) => {
-    const orders = JSON.parse(fs.readFileSync(ordersFile, 'utf8'));
-    res.json(orders.reverse()); // новые заказы первыми
+    try {
+        const orders = JSON.parse(fs.readFileSync(ordersFile, 'utf8'));
+        res.json(orders.reverse());
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка загрузки заказов' });
+    }
 });
 
 // ========== ОТДАЁМ HTML ==========
