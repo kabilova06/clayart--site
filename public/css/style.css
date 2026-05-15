@@ -2315,3 +2315,43 @@ background-position: right 18px center;
         gap: 10px;
     }
 }
+/* Стили для пагинации - улучшенная видимость */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 50px;
+    flex-wrap: wrap;
+}
+.pagination button {
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid #d8c3a5;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1e1e1e;
+}
+.pagination button:hover {
+    background: #d8c3a5;
+    border-color: #d8c3a5;
+    color: #1e1e1e;
+}
+.pagination button.active {
+    background: #d8c3a5;
+    border-color: #d8c3a5;
+    color: #1e1e1e;
+    font-weight: 600;
+}
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f0f0f0;
+}
+.pagination span {
+    padding: 10px;
+    color: #999;
+}
