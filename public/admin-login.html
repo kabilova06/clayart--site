@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в админ-панель — ClayArt</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #f6f3ef;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-container {
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 10px;
+            color: #1e1e1e;
+        }
+        .subtitle {
+            color: #999;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e0ddd9;
+            border-radius: 16px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            background: #f8f5f1;
+            transition: 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #d8c3a5;
+            background: white;
+        }
+        button {
+            width: 100%;
+            padding: 16px;
+            background: #d8c3a5;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Montserrat', sans-serif;
+        }
+        button:hover {
+            background: #1e1e1e;
+            color: white;
+        }
+        .error {
+            color: #e74c3c;
+            margin-top: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #999;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover {
+            color: #1e1e1e;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>🔐 Вход в админ-панель</h1>
+        <div class="subtitle">ClayArt — управление товарами и заказами</div>
+        
+        <input type="text" id="login" placeholder="Логин" autocomplete="off">
+        <input type="password" id="password" placeholder="Пароль">
+        
+        <button onclick="login()">Войти</button>
+        
+        <div class="error" id="errorMsg">Неверный логин или пароль</div>
+        
+        <a href="/" class="back-link">← На главную</a>
+    </div>
+
+    <script>
+        async function login() {
+            const login = document.getElementById('login').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMsg');
+            
+            // Проверяем логин и пароль (простые, но можно изменить)
+            // В продакшене лучше хранить в .env, но для диплома так ок
+            if (login === 'admin' && password === 'clayart2026') {
+                // Сохраняем токен в localStorage
+                localStorage.setItem('admin_token', 'Bearer clayart_admin_2026');
+                // Перенаправляем на панель управления товарами
+                window.location.href = '/admin-products.html';
+            } else {
+                errorDiv.style.display = 'block';
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>
