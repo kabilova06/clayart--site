@@ -3,7 +3,7 @@ const Database = require('better-sqlite3');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
-const path = require('path');
+const path = require('path');  // ← ДОБАВИТЬ ЭТУ СТРОКУ
 
 const app = express();
 
@@ -32,7 +32,7 @@ db.exec(`
 `);
 console.log('✅ База данных готова');
 
-// Добавление заказа
+// API для заказов
 app.post('/api/order', (req, res) => {
     const { customer, phone, address, items, total } = req.body;
     
@@ -42,14 +42,41 @@ app.post('/api/order', (req, res) => {
     `);
     
     const result = stmt.run(customer, phone, address, JSON.stringify(items), total);
-    
     res.json({ success: true, orderId: result.lastInsertRowid });
 });
 
-// Получение заказов
 app.get('/api/orders', (req, res) => {
     const rows = db.prepare('SELECT * FROM orders ORDER BY id DESC').all();
     res.json(rows);
+});
+
+// ===== ОТДАЁМ HTML СТРАНИЦЫ =====
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+app.get('/catalog.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'catalog.html'));
+});
+app.get('/about.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'about.html'));
+});
+app.get('/gallery.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'gallery.html'));
+});
+app.get('/reviews.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'reviews.html'));
+});
+app.get('/contacts.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'contacts.html'));
+});
+app.get('/faq.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'faq.html'));
+});
+app.get('/cart.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'cart.html'));
+});
+app.get('/admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 // Запуск сервера
