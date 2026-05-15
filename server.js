@@ -101,12 +101,8 @@ console.log('✅ Добавлено 25 товаров');
 
 // ========== ЗАЩИТА АДМИНКИ ==========
 function checkAuth(req, res, next) {
-    const token = req.headers['authorization'];
-    if (token === 'Bearer clayart_admin_2026') {
-        next();
-    } else {
-        res.status(401).json({ error: 'Не авторизован' });
-    }
+    // Временно отключаем авторизацию для теста
+    next();
 }
 
 // ========== API ДЛЯ ТОВАРОВ ==========
