@@ -17,83 +17,18 @@ if (!fs.existsSync('./database')) {
 
 const db = new sqlite3.Database('./database/clayart.db');
 
-db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS orders (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        customer TEXT,
-        phone TEXT,
-        address TEXT,
-        items TEXT,
-        total INTEGER,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )`);
-    
-    db.run(`CREATE TABLE IF NOT EXISTS products (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        price INTEGER NOT NULL,
-        category TEXT NOT NULL,
-        description TEXT,
-        image TEXT,
-        color_variants TEXT DEFAULT '[]',
-        is_summer INTEGER DEFAULT 0,
-        is_bestseller INTEGER DEFAULT 0,
-        is_new INTEGER DEFAULT 0,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )`);
-});
+// Таблица для заказов
+db.run(`CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer TEXT,
+    phone TEXT,
+    address TEXT,
+    items TEXT,
+    total INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)`);
 
-// API
-app.get('/api/products', (req, res) => {
-    db.all('SELECT * FROM products', [], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(rows);
-    });
-});
-
-app.get('/api/admin/products', (req, res) => {
-    db.all('SELECT * FROM products', [], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(rows);
-    });
-});
-
-app.get('/api/admin/products/:id', (req, res) => {
-    db.get('SELECT * FROM products WHERE id = ?', [req.params.id], (err, row) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(row);
-    });
-});
-
-app.post('/api/admin/products', (req, res) => {
-    const { name, price, category, description, image, color_variants, is_summer, is_bestseller, is_new } = req.body;
-    
-    db.run(`INSERT INTO products (name, price, category, description, image, color_variants, is_summer, is_bestseller, is_new) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        name, price, category, description || '', image || '', JSON.stringify(color_variants || []), is_summer ? 1 : 0, is_bestseller ? 1 : 0, is_new ? 1 : 0,
-        function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ success: true, id: this.lastID });
-        });
-});
-
-app.put('/api/admin/products/:id', (req, res) => {
-    const { name, price, category, description, image, color_variants, is_summer, is_bestseller, is_new } = req.body;
-    
-    db.run(`UPDATE products SET name = ?, price = ?, category = ?, description = ?, image = ?, color_variants = ?, is_summer = ?, is_bestseller = ?, is_new = ? WHERE id = ?`,
-        name, price, category, description || '', image || '', JSON.stringify(color_variants || []), is_summer ? 1 : 0, is_bestseller ? 1 : 0, is_new ? 1 : 0, req.params.id,
-        function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ success: true });
-        });
-});
-
-app.delete('/api/admin/products/:id', (req, res) => {
-    db.run('DELETE FROM products WHERE id = ?', req.params.id, function(err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ success: true });
-    });
-});
-
+// API для заказов
 app.post('/api/order', (req, res) => {
     const { customer, phone, address, items, total } = req.body;
     
@@ -112,12 +47,16 @@ app.get('/api/orders', (req, res) => {
     });
 });
 
-// HTML
+// Отдаём HTML
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/catalog.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'catalog.html')));
-app.get('/admin-products.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-products.html')));
-app.get('/admin-orders.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-orders.html')));
-app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-login.html')));
+app.get('/about.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'about.html')));
+app.get('/gallery.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'gallery.html')));
+app.get('/reviews.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'reviews.html')));
+app.get('/contacts.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'contacts.html')));
+app.get('/faq.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'faq.html')));
+app.get('/cart.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'cart.html')));
+app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
