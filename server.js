@@ -11,14 +11,13 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// Создаём папку database, если её нет
 if (!fs.existsSync('./database')) {
     fs.mkdirSync('./database');
 }
 
 const db = new Database('./database/clayart.db');
 
-// Создаём таблицы
+// Создаём базовые таблицы
 db.exec(`
     CREATE TABLE IF NOT EXISTS orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,16 +35,46 @@ db.exec(`
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         price INTEGER NOT NULL,
-        category TEXT NOT NULL,
-        description TEXT,
-        image TEXT,
-        color_variants TEXT DEFAULT '[]',
-        is_summer INTEGER DEFAULT 0,
-        is_bestseller INTEGER DEFAULT 0,
-        is_new INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
 `);
+
+// ========== АВТОМАТИЧЕСКОЕ ОБНОВЛЕНИЕ ТАБЛИЦЫ ==========
+try {
+    const columns = db.prepare("PRAGMA table_info(products)").all();
+    const columnNames = columns.map(c => c.name);
+    
+    if (!columnNames.includes('category')) {
+        db.exec('ALTER TABLE products ADD COLUMN category TEXT');
+        console.log('✅ Добавлена колонка category');
+    }
+    if (!columnNames.includes('description')) {
+        db.exec('ALTER TABLE products ADD COLUMN description TEXT');
+        console.log('✅ Добавлена колонка description');
+    }
+    if (!columnNames.includes('image')) {
+        db.exec('ALTER TABLE products ADD COLUMN image TEXT');
+        console.log('✅ Добавлена колонка image');
+    }
+    if (!columnNames.includes('color_variants')) {
+        db.exec('ALTER TABLE products ADD COLUMN color_variants TEXT DEFAULT "[]"');
+        console.log('✅ Добавлена колонка color_variants');
+    }
+    if (!columnNames.includes('is_summer')) {
+        db.exec('ALTER TABLE products ADD COLUMN is_summer INTEGER DEFAULT 0');
+        console.log('✅ Добавлена колонка is_summer');
+    }
+    if (!columnNames.includes('is_bestseller')) {
+        db.exec('ALTER TABLE products ADD COLUMN is_bestseller INTEGER DEFAULT 0');
+        console.log('✅ Добавлена колонка is_bestseller');
+    }
+    if (!columnNames.includes('is_new')) {
+        db.exec('ALTER TABLE products ADD COLUMN is_new INTEGER DEFAULT 0');
+        console.log('✅ Добавлена колонка is_new');
+    }
+} catch(e) {
+    console.log('Ошибка обновления БД:', e.message);
+}
 
 console.log('✅ База данных готова');
 
@@ -59,21 +88,18 @@ function checkAuth(req, res, next) {
     }
 }
 
-// ========== API ДЛЯ ТОВАРОВ (защищенные) ==========
-// Получить все товары (для админки)
+// ========== API ДЛЯ ТОВАРОВ ==========
 app.get('/api/admin/products', checkAuth, (req, res) => {
     const products = db.prepare('SELECT * FROM products ORDER BY id').all();
     res.json(products);
 });
 
-// Получить один товар по id
 app.get('/api/admin/products/:id', checkAuth, (req, res) => {
     const product = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
     if (!product) return res.status(404).json({ error: 'Товар не найден' });
     res.json(product);
 });
 
-// Добавить товар
 app.post('/api/admin/products', checkAuth, (req, res) => {
     const { name, price, category, description, image, color_variants, is_summer, is_bestseller, is_new } = req.body;
     
@@ -85,7 +111,7 @@ app.post('/api/admin/products', checkAuth, (req, res) => {
     const result = stmt.run(
         name, 
         price, 
-        category, 
+        category || 'mugs', 
         description || '', 
         image || '', 
         JSON.stringify(color_variants || []), 
@@ -97,7 +123,6 @@ app.post('/api/admin/products', checkAuth, (req, res) => {
     res.json({ success: true, id: result.lastInsertRowid });
 });
 
-// Обновить товар
 app.put('/api/admin/products/:id', checkAuth, (req, res) => {
     const { name, price, category, description, image, color_variants, is_summer, is_bestseller, is_new } = req.body;
     
@@ -111,7 +136,7 @@ app.put('/api/admin/products/:id', checkAuth, (req, res) => {
     const result = stmt.run(
         name, 
         price, 
-        category, 
+        category || 'mugs', 
         description || '', 
         image || '', 
         JSON.stringify(color_variants || []), 
@@ -125,15 +150,13 @@ app.put('/api/admin/products/:id', checkAuth, (req, res) => {
     res.json({ success: true });
 });
 
-// Удалить товар
 app.delete('/api/admin/products/:id', checkAuth, (req, res) => {
     const result = db.prepare('DELETE FROM products WHERE id = ?').run(req.params.id);
     if (result.changes === 0) return res.status(404).json({ error: 'Товар не найден' });
     res.json({ success: true });
 });
 
-// ========== ПУБЛИЧНЫЕ API (без защиты) ==========
-// Получить все товары для каталога
+// ========== ПУБЛИЧНЫЕ API ==========
 app.get('/api/products', (req, res) => {
     const products = db.prepare('SELECT * FROM products ORDER BY id').all();
     const productsWithColors = products.map(p => ({
@@ -143,7 +166,6 @@ app.get('/api/products', (req, res) => {
     res.json(productsWithColors);
 });
 
-// Получить товар по id для страницы товара
 app.get('/api/products/:id', (req, res) => {
     const product = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
     if (!product) return res.status(404).json({ error: 'Товар не найден' });
@@ -169,42 +191,19 @@ app.get('/api/orders', (req, res) => {
     res.json(rows);
 });
 
-// ========== ОТДАЁМ HTML СТРАНИЦЫ ==========
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-app.get('/catalog.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'catalog.html'));
-});
-app.get('/about.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'about.html'));
-});
-app.get('/gallery.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'gallery.html'));
-});
-app.get('/reviews.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'reviews.html'));
-});
-app.get('/contacts.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'contacts.html'));
-});
-app.get('/faq.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'faq.html'));
-});
-app.get('/cart.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'cart.html'));
-});
-app.get('/admin-orders.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'admin-orders.html'));
-});
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'admin-login.html'));
-});
-app.get('/admin-products.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'admin-products.html'));
-});
+// ========== ОТДАЁМ HTML ==========
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get('/catalog.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'catalog.html')));
+app.get('/about.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'about.html')));
+app.get('/gallery.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'gallery.html')));
+app.get('/reviews.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'reviews.html')));
+app.get('/contacts.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'contacts.html')));
+app.get('/faq.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'faq.html')));
+app.get('/cart.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'cart.html')));
+app.get('/admin-orders.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-orders.html')));
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-login.html')));
+app.get('/admin-products.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-products.html')));
 
-// Запуск сервера
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Сервер запущен: http://localhost:${PORT}`);
