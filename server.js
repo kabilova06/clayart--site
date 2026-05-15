@@ -1,9 +1,9 @@
 const express = require('express');
 const Database = require('better-sqlite3');
 const bodyParser = require('body-parser');
-const path = require('path');
 const cors = require('cors');
 const fs = require('fs');
+const path = require('path');
 
 const app = express();
 
@@ -18,7 +18,7 @@ if (!fs.existsSync('./database')) {
 
 const db = new Database('./database/clayart.db');
 
-// Создаём таблицу, если её нет
+// Создаём таблицу
 db.exec(`
     CREATE TABLE IF NOT EXISTS orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,5 +55,5 @@ app.get('/api/orders', (req, res) => {
 // Запуск сервера
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 Сервер запущен: http://localhost:${PORT}`);
+    console.log(`🚀 Сервер запущен на порту ${PORT}`);
 });
