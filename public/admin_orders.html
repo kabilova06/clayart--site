@@ -5,15 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Заказы — Админ-панель ClayArt</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Montserrat', sans-serif;
             background: #f6f3ef;
             padding: 40px 20px;
         }
-        .container { max-width: 1400px; margin: 0 auto; }
-        h1 { font-size: 42px; font-weight: 300; margin-bottom: 40px; text-align: center; }
-        .orders-grid { display: grid; gap: 30px; }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 42px;
+            font-weight: 300;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .orders-grid {
+            display: grid;
+            gap: 30px;
+        }
         .order-card {
             background: white;
             border-radius: 24px;
@@ -21,7 +36,9 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             transition: 0.3s;
         }
-        .order-card:hover { transform: translateY(-5px); }
+        .order-card:hover {
+            transform: translateY(-5px);
+        }
         .order-header {
             display: flex;
             justify-content: space-between;
@@ -32,18 +49,36 @@
             border-bottom: 1px solid #eee;
             margin-bottom: 20px;
         }
-        .order-number { font-size: 24px; font-weight: 500; color: #d8c3a5; }
-        .order-date { color: #999; font-size: 14px; }
+        .order-number {
+            font-size: 24px;
+            font-weight: 500;
+            color: #d8c3a5;
+        }
+        .order-date {
+            color: #999;
+            font-size: 14px;
+        }
         .customer-info {
             background: #f8f5f1;
             padding: 20px;
             border-radius: 16px;
             margin-bottom: 20px;
         }
-        .customer-info p { margin: 8px 0; color: #555; }
-        .customer-info strong { color: #1e1e1e; }
-        .items-list { margin-top: 20px; }
-        .items-list h3 { font-size: 18px; margin-bottom: 15px; font-weight: 500; }
+        .customer-info p {
+            margin: 8px 0;
+            color: #555;
+        }
+        .customer-info strong {
+            color: #1e1e1e;
+        }
+        .items-list {
+            margin-top: 20px;
+        }
+        .items-list h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
         .item {
             display: flex;
             justify-content: space-between;
@@ -51,9 +86,16 @@
             padding: 12px 0;
             border-bottom: 1px solid #f0f0f0;
         }
-        .item:last-child { border-bottom: none; }
-        .item-name { flex: 1; }
-        .item-price { font-weight: 500; color: #1e1e1e; }
+        .item:last-child {
+            border-bottom: none;
+        }
+        .item-name {
+            flex: 1;
+        }
+        .item-price {
+            font-weight: 500;
+            color: #1e1e1e;
+        }
         .total {
             margin-top: 20px;
             padding-top: 20px;
@@ -62,7 +104,13 @@
             font-weight: 500;
             border-top: 2px solid #d8c3a5;
         }
-        .empty { text-align: center; padding: 60px; background: white; border-radius: 24px; color: #999; }
+        .empty {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 24px;
+            color: #999;
+        }
         .refresh-btn {
             display: block;
             margin: 0 auto 30px;
@@ -74,7 +122,10 @@
             font-size: 16px;
             transition: 0.3s;
         }
-        .refresh-btn:hover { background: #1e1e1e; color: white; }
+        .refresh-btn:hover {
+            background: #1e1e1e;
+            color: white;
+        }
         .back-link {
             display: inline-block;
             margin-bottom: 30px;
@@ -85,7 +136,9 @@
             border-radius: 30px;
             transition: 0.3s;
         }
-        .back-link:hover { background: #d8c3a5; }
+        .back-link:hover {
+            background: #d8c3a5;
+        }
         .nav-links {
             display: flex;
             gap: 15px;
@@ -100,13 +153,18 @@
             color: #1e1e1e;
             transition: 0.3s;
         }
-        .nav-link.active { background: #d8c3a5; }
-        .nav-link:hover { background: #d8c3a5; }
+        .nav-link.active {
+            background: #d8c3a5;
+        }
+        .nav-link:hover {
+            background: #d8c3a5;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="/" class="back-link">← На главную</a>
+        <a href="/admin-products.html" class="back-link">← Назад к товарам</a>
+        <a href="/" class="back-link" style="margin-left: 10px;">🏠 На главную</a>
         <h1>📦 Управление заказами</h1>
         <div class="nav-links">
             <a href="/admin-products.html" class="nav-link">🛍️ Товары</a>
@@ -183,7 +241,7 @@
                 return m;
             });
         }
-        
+        <a href="/admin-orders.html" class="nav-link">📦 Заказы</a>
         loadOrders();
     </script>
 </body>
