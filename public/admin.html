@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Админ-панель — Заказы ClayArt</title>
+    <title>Заказы — Админ-панель ClayArt</title>
     <style>
         * {
             margin: 0;
@@ -139,12 +139,37 @@
         .back-link:hover {
             background: #d8c3a5;
         }
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .nav-link {
+            padding: 10px 24px;
+            background: white;
+            border-radius: 30px;
+            text-decoration: none;
+            color: #1e1e1e;
+            transition: 0.3s;
+        }
+        .nav-link.active {
+            background: #d8c3a5;
+        }
+        .nav-link:hover {
+            background: #d8c3a5;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="/" class="back-link">← На главную</a>
+        <a href="/admin-products.html" class="back-link">← Назад к товарам</a>
+        <a href="/" class="back-link" style="margin-left: 10px;">🏠 На главную</a>
         <h1>📦 Управление заказами</h1>
+        <div class="nav-links">
+            <a href="/admin-products.html" class="nav-link">🛍️ Товары</a>
+            <a href="/admin-orders.html" class="nav-link active">📦 Заказы</a>
+        </div>
         <button class="refresh-btn" onclick="loadOrders()">🔄 Обновить</button>
         <div id="ordersContainer" class="orders-grid">
             <div class="empty">Загрузка заказов...</div>
@@ -152,6 +177,11 @@
     </div>
 
     <script>
+        let token = localStorage.getItem('admin_token');
+        if (!token) {
+            window.location.href = '/admin';
+        }
+
         async function loadOrders() {
             const container = document.getElementById('ordersContainer');
             container.innerHTML = '<div class="empty">Загрузка заказов...</div>';
@@ -165,35 +195,40 @@
                     return;
                 }
                 
-                container.innerHTML = orders.map(order => `
-                    <div class="order-card">
-                        <div class="order-header">
-                            <span class="order-number">Заказ №${order.id}</span>
-                            <span class="order-date">${new Date().toLocaleDateString('ru-RU')}</span>
+                container.innerHTML = orders.map(order => {
+                    let items = [];
+                    try {
+                        items = JSON.parse(order.items);
+                    } catch(e) { items = []; }
+                    
+                    return `
+                        <div class="order-card">
+                            <div class="order-header">
+                                <span class="order-number">Заказ №${order.id}</span>
+                                <span class="order-date">${new Date(order.created_at).toLocaleDateString('ru-RU')}</span>
+                            </div>
+                            <div class="customer-info">
+                                <p><strong>👤 Клиент:</strong> ${escapeHtml(order.customer)}</p>
+                                <p><strong>📞 Телефон:</strong> ${escapeHtml(order.phone)}</p>
+                                <p><strong>📍 Адрес:</strong> ${escapeHtml(order.address)}</p>
+                            </div>
+                            <div class="items-list">
+                                <h3>🛍️ Товары:</h3>
+                                ${items.map(item => `
+                                    <div class="item">
+                                        <span class="item-name">${escapeHtml(item.name)}</span>
+                                        <span class="item-price">${item.price} ₽</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="total">Итого: ${order.total} ₽</div>
                         </div>
-                        <div class="customer-info">
-                            <p><strong>👤 Клиент:</strong> ${escapeHtml(order.customer)}</p>
-                            <p><strong>📞 Телефон:</strong> ${escapeHtml(order.phone)}</p>
-                            <p><strong>📍 Адрес:</strong> ${escapeHtml(order.address)}</p>
-                        </div>
-                        <div class="items-list">
-                            <h3>🛍️ Товары:</h3>
-                            ${JSON.parse(order.items).map(item => `
-                                <div class="item">
-                                    <span class="item-name">${escapeHtml(item.name)}</span>
-                                    <span class="item-price">${item.price} ₽</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div class="total">
-                            Итого: ${order.total} ₽
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
                 
             } catch(error) {
                 console.error('Ошибка:', error);
-                container.innerHTML = '<div class="empty">❌ Ошибка загрузки заказов. Убедитесь, что сервер запущен.</div>';
+                container.innerHTML = '<div class="empty">❌ Ошибка загрузки заказов</div>';
             }
         }
         
@@ -207,6 +242,7 @@
             });
         }
         
+        // Загружаем заказы при загрузке страницы
         loadOrders();
     </script>
 </body>
