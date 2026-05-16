@@ -11,11 +11,9 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-if (!fs.existsSync('./database')) {
-    fs.mkdirSync('./database');
-}
+if (!fs.existsSync('./database')) fs.mkdirSync('./database');
 
-// УДАЛЯЕМ СТАРУЮ БАЗУ (один раз, потом закомментировать)
+// При первом запуске удаляем старую БД и создаём новую
 if (fs.existsSync('./database/clayart.db')) {
     fs.unlinkSync('./database/clayart.db');
     console.log('🗑️ Старая база удалена');
@@ -23,7 +21,6 @@ if (fs.existsSync('./database/clayart.db')) {
 
 const db = new Database('./database/clayart.db');
 
-// СОЗДАЁМ ТАБЛИЦУ
 db.exec(`
     CREATE TABLE orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,22 +32,13 @@ db.exec(`
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
 `);
-
 console.log('✅ Таблица orders создана');
 
 // ========== API ==========
-
 app.post('/api/order', (req, res) => {
     const { customer, phone, address, items, total } = req.body;
-    
-    // Проверяем, что items — это массив
     const itemsStr = Array.isArray(items) ? JSON.stringify(items) : items;
-    
-    const stmt = db.prepare(`
-        INSERT INTO orders (customer, phone, address, items, total) 
-        VALUES (?, ?, ?, ?, ?)
-    `);
-    
+    const stmt = db.prepare(`INSERT INTO orders (customer, phone, address, items, total) VALUES (?, ?, ?, ?, ?)`);
     const result = stmt.run(customer, phone, address, itemsStr, total);
     console.log(`✅ Заказ №${result.lastInsertRowid} сохранён`);
     res.json({ success: true, orderId: result.lastInsertRowid });
@@ -62,9 +50,7 @@ app.get('/api/orders', (req, res) => {
     res.json(rows);
 });
 
-app.get('/api/test', (req, res) => {
-    res.json({ status: 'ok', message: 'Сервер работает' });
-});
+app.get('/api/test', (req, res) => res.json({ status: 'ok', message: 'Сервер работает' }));
 
 // ========== ОТДАЁМ HTML ==========
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
@@ -78,6 +64,4 @@ app.get('/cart.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 
 app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`🚀 Сервер запущен: http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 Сервер запущен: http://localhost:${PORT}`));
