@@ -1,7 +1,45 @@
 // js/script.js
 
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
+// Функция для показа красивого уведомления
+function showToast(message, type = 'success') {
+    // Удаляем старое уведомление, если есть
+    const oldToast = document.querySelector('.toast-notification');
+    if (oldToast) {
+        oldToast.remove();
+    }
+    
+    // Создаём новое уведомление
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    
+    const icon = type === 'success' ? '✅' : '❌';
+    
+    toast.innerHTML = `
+        <span class="toast-icon">${icon}</span>
+        <span class="toast-text">${message}</span>
+        <button class="toast-close">✕</button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Показываем уведомление
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    // Закрытие по кнопке
+    toast.querySelector('.toast-close').addEventListener('click', () => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    });
+    
+    // Автоматическое закрытие через 3 секунды
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
 /* =========================
    КОРЗИНА (ИСПРАВЛЕНО)
 ========================= */
@@ -39,7 +77,7 @@ function addToCart(button, name, price, event) {
     updateCartCount();
     
     console.log('✅ Товар добавлен. В корзине:', cart.length);
-    alert('Товар добавлен в корзину!');
+    showToast('Товар добавлен в корзину!', 'success');
 }
 
 function updateCartCount() {
@@ -88,6 +126,7 @@ function removeFromCart(index) {
     localStorage.setItem('cart', JSON.stringify(cart));
     displayCart();
     updateCartCount();
+    showToast('Товар удалён из корзины', 'success');
 }
 
 /* =========================
