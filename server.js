@@ -11,17 +11,20 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// Создаём папку database
 if (!fs.existsSync('./database')) {
     fs.mkdirSync('./database');
 }
 
-// Подключаемся к БД (файл создастся сам)
+// Удаляем старую базу и создаём новую (один раз)
+if (fs.existsSync('./database/clayart.db')) {
+    fs.unlinkSync('./database/clayart.db');
+    console.log('🗑️ Старая база удалена');
+}
+
 const db = new Database('./database/clayart.db');
 
-// СОЗДАЁМ ТАБЛИЦУ ДЛЯ ЗАКАЗОВ (гарантированно)
 db.exec(`
-    CREATE TABLE IF NOT EXISTS orders (
+    CREATE TABLE orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         customer TEXT,
         phone TEXT,
@@ -32,15 +35,8 @@ db.exec(`
     )
 `);
 
-console.log('✅ База данных и таблица orders готовы');
+console.log('✅ Новая база данных создана');
 
-// Проверим, что таблица создалась
-const tableCheck = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='orders'").get();
-console.log('📋 Таблица orders существует:', !!tableCheck);
-
-// ========== API ДЛЯ ЗАКАЗОВ ==========
-
-// Сохранение заказа
 app.post('/api/order', (req, res) => {
     const { customer, phone, address, items, total } = req.body;
     
@@ -54,24 +50,20 @@ app.post('/api/order', (req, res) => {
         console.log(`✅ Заказ №${result.lastInsertRowid} сохранён`);
         res.json({ success: true, orderId: result.lastInsertRowid });
     } catch (error) {
-        console.error('❌ Ошибка сохранения заказа:', error);
+        console.error('❌ Ошибка:', error);
         res.status(500).json({ error: 'Ошибка сервера' });
     }
 });
 
-// Получение всех заказов
 app.get('/api/orders', (req, res) => {
     try {
         const rows = db.prepare('SELECT * FROM orders ORDER BY id DESC').all();
-        console.log(`📦 Отправлено ${rows.length} заказов`);
         res.json(rows);
     } catch (error) {
-        console.error('❌ Ошибка загрузки заказов:', error);
-        res.status(500).json({ error: 'Ошибка загрузки заказов' });
+        res.status(500).json({ error: 'Ошибка загрузки' });
     }
 });
 
-// ========== ОТДАЁМ HTML ==========
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/catalog.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'catalog.html')));
 app.get('/about.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'about.html')));
