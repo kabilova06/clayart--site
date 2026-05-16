@@ -15,7 +15,7 @@ if (!fs.existsSync('./database')) {
     fs.mkdirSync('./database');
 }
 
-// Удаляем старую базу и создаём новую (один раз)
+// УДАЛЯЕМ СТАРУЮ БАЗУ (один раз, потом закомментировать)
 if (fs.existsSync('./database/clayart.db')) {
     fs.unlinkSync('./database/clayart.db');
     console.log('🗑️ Старая база удалена');
@@ -23,47 +23,50 @@ if (fs.existsSync('./database/clayart.db')) {
 
 const db = new Database('./database/clayart.db');
 
+// СОЗДАЁМ ТАБЛИЦУ
 db.exec(`
     CREATE TABLE orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        customer TEXT,
-        phone TEXT,
-        address TEXT,
-        items TEXT,
-        total INTEGER,
+        customer TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        address TEXT NOT NULL,
+        items TEXT NOT NULL,
+        total INTEGER NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
 `);
 
-console.log('✅ Новая база данных создана');
+console.log('✅ Таблица orders создана');
+
+// ========== API ==========
 
 app.post('/api/order', (req, res) => {
     const { customer, phone, address, items, total } = req.body;
     
-    try {
-        const stmt = db.prepare(`
-            INSERT INTO orders (customer, phone, address, items, total) 
-            VALUES (?, ?, ?, ?, ?)
-        `);
-        
-        const result = stmt.run(customer, phone, address, JSON.stringify(items), total);
-        console.log(`✅ Заказ №${result.lastInsertRowid} сохранён`);
-        res.json({ success: true, orderId: result.lastInsertRowid });
-    } catch (error) {
-        console.error('❌ Ошибка:', error);
-        res.status(500).json({ error: 'Ошибка сервера' });
-    }
+    // Проверяем, что items — это массив
+    const itemsStr = Array.isArray(items) ? JSON.stringify(items) : items;
+    
+    const stmt = db.prepare(`
+        INSERT INTO orders (customer, phone, address, items, total) 
+        VALUES (?, ?, ?, ?, ?)
+    `);
+    
+    const result = stmt.run(customer, phone, address, itemsStr, total);
+    console.log(`✅ Заказ №${result.lastInsertRowid} сохранён`);
+    res.json({ success: true, orderId: result.lastInsertRowid });
 });
 
 app.get('/api/orders', (req, res) => {
-    try {
-        const rows = db.prepare('SELECT * FROM orders ORDER BY id DESC').all();
-        res.json(rows);
-    } catch (error) {
-        res.status(500).json({ error: 'Ошибка загрузки' });
-    }
+    const rows = db.prepare('SELECT * FROM orders ORDER BY id DESC').all();
+    console.log(`📦 Отправлено ${rows.length} заказов`);
+    res.json(rows);
 });
 
+app.get('/api/test', (req, res) => {
+    res.json({ status: 'ok', message: 'Сервер работает' });
+});
+
+// ========== ОТДАЁМ HTML ==========
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/catalog.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'catalog.html')));
 app.get('/about.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'about.html')));
